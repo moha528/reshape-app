@@ -42,7 +42,8 @@ export function Sidebar({ current, navigate, credits, onAuthLogout }) {
             {g.items.map(it => (
               <button key={it.id}
                 className={`sb-item ${current === it.id ? 'active' : ''}`}
-                onClick={() => navigate(it.id)}>
+                onClick={() => navigate(it.id)}
+                title={it.label}>
                 <Icon name={it.icon} size={15} />
                 <span>{it.label}</span>
                 {it.badge && <span className="sb-badge">{it.badge}</span>}
