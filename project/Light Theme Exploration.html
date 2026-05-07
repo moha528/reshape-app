@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Reshape — Light theme exploration</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;550;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #1a1d29; color: #e8eaf0; -webkit-font-smoothing: antialiased; letter-spacing: -0.005em; }
+
+  /* ===== Mock chrome (shared) ===== */
+  .mock {
+    width: 100%; height: 540px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    font-size: 13px;
+    --brand: linear-gradient(135deg, #9f67ff 0%, #6366f1 50%, #33dbfd 100%);
+  }
+  .mock .sb {
+    width: 200px; flex-shrink: 0;
+    border: 1px solid var(--c-border);
+    border-radius: 10px;
+    margin: 8px 0 8px 8px;
+    background: var(--c-surface);
+    padding: 10px 8px;
+    display: flex; flex-direction: column;
+    gap: 1px;
+  }
+  .mock .brand-row { display: flex; align-items: center; gap: 8px; padding: 8px 8px 14px; }
+  .mock .brand-logo { width: 22px; height: 22px; border-radius: 6px; background: var(--brand); }
+  .mock .brand-text { font-weight: 600; font-size: 13px; color: var(--c-text); letter-spacing: -0.01em; }
+  .mock .brand-org { font-size: 10.5px; color: var(--c-text-3); }
+  .mock .nav-section { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--c-text-4); padding: 10px 8px 4px; }
+  .mock .nav-item { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 6px; font-size: 12.5px; color: var(--c-text-2); cursor: default; }
+  .mock .nav-item.active { background: var(--c-active); color: var(--c-text); font-weight: 550; }
+  .mock .nav-item:hover { background: var(--c-hover); }
+  .mock .nav-dot { width: 12px; height: 12px; border-radius: 3px; background: var(--c-text-3); opacity: 0.4; flex-shrink: 0; }
+  .mock .nav-item.active .nav-dot { background: var(--c-text); opacity: 1; }
+  .mock .nav-badge { margin-left: auto; font-size: 10px; padding: 1px 6px; background: var(--c-surface-3); color: var(--c-text-2); border-radius: 99px; font-weight: 600; }
+
+  .mock .main {
+    flex: 1; min-width: 0;
+    border: 1px solid var(--c-border);
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+    margin: 8px 8px 8px 0;
+    background: var(--c-surface);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .mock .tb { height: 44px; border-bottom: 1px solid var(--c-border); display: flex; align-items: center; padding: 0 16px; gap: 8px; flex-shrink: 0; }
+  .mock .tb-pill { width: 32px; height: 26px; border-radius: 6px; background: var(--c-surface-2); border: 1px solid var(--c-border); }
+  .mock .tb-search { flex: 1; max-width: 220px; height: 26px; border-radius: 6px; background: var(--c-surface-2); border: 1px solid var(--c-border); display: flex; align-items: center; padding: 0 10px; font-size: 11.5px; color: var(--c-text-4); }
+  .mock .tb-actions { margin-left: auto; display: flex; gap: 4px; }
+  .mock .tb-actions span { width: 26px; height: 26px; border-radius: 6px; background: var(--c-hover); }
+
+  .mock .content { flex: 1; padding: 18px 20px; overflow: hidden; }
+  .mock .h1 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; margin: 0 0 14px; color: var(--c-text); letter-spacing: -0.022em; }
+
+  .mock .stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .mock .stat { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 8px; padding: 10px 12px; }
+  .mock .stat-l { font-size: 10px; color: var(--c-text-3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .mock .stat-v { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 600; color: var(--c-text); margin-top: 4px; letter-spacing: -0.02em; }
+  .mock .stat-d { font-size: 10.5px; color: var(--c-success); margin-top: 2px; }
+
+  .mock .card { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: 8px; }
+  .mock .card-h { padding: 11px 14px; border-bottom: 1px solid var(--c-border-sub); font-size: 12.5px; font-weight: 600; color: var(--c-text); display: flex; justify-content: space-between; align-items: center; }
+  .mock .card-h .meta { font-size: 11px; color: var(--c-text-3); font-weight: 400; }
+  .mock .row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--c-border-sub); font-size: 12px; }
+  .mock .row:last-child { border-bottom: none; }
+  .mock .row-id { font-family: 'JetBrains Mono', monospace; color: var(--c-text-3); font-size: 11px; flex-shrink: 0; }
+  .mock .row-name { flex: 1; color: var(--c-text); font-weight: 500; }
+  .mock .row-tag { padding: 2px 8px; border-radius: 99px; background: var(--c-tinted); color: var(--c-accent); font-size: 10.5px; font-weight: 600; }
+  .mock .row-bar { width: 60px; height: 4px; background: var(--c-surface-3); border-radius: 99px; overflow: hidden; }
+  .mock .row-bar > div { height: 100%; background: var(--c-text); border-radius: 99px; }
+
+  /* ===== Theme A: Cool slate (current) ===== */
+  .theme-a {
+    --c-canvas: #eff1f5;
+    --c-surface: #ffffff;
+    --c-surface-2: #f6f7fb;
+    --c-surface-3: #eceef4;
+    --c-hover: #f1f3f8;
+    --c-active: #e6e9f1;
+    --c-tinted: #eef0f7;
+    --c-border: #e2e5ec;
+    --c-border-sub: #ebeef3;
+    --c-text: #0a0e1c;
+    --c-text-2: #3d4357;
+    --c-text-3: #6b7186;
+    --c-text-4: #9aa0b3;
+    --c-success: #10b981;
+    --c-accent: #5b3df0;
+    background: var(--c-canvas);
+  }
+
+  /* ===== Theme B: Brand-tinted (recommended) ===== */
+  .theme-b {
+    --c-canvas: #f4f2fb;
+    --c-surface: #ffffff;
+    --c-surface-2: #faf9fd;
+    --c-surface-3: #ece9f6;
+    --c-hover: #efedf8;
+    --c-active: #e5e1f3;
+    --c-tinted: #ebe5ff;
+    --c-border: #e3dff1;
+    --c-border-sub: #ece9f3;
+    --c-text: #1a0f3a;
+    --c-text-2: #443d63;
+    --c-text-3: #756e8e;
+    --c-text-4: #a39dba;
+    --c-success: #10b981;
+    --c-accent: #6b3df0;
+    background: var(--c-canvas);
+  }
+
+  /* ===== Theme C: Stone / paper warm ===== */
+  .theme-c {
+    --c-canvas: #f5f4ef;
+    --c-surface: #fefdfa;
+    --c-surface-2: #f9f7f1;
+    --c-surface-3: #ede9e0;
+    --c-hover: #f0ede5;
+    --c-active: #e6e2d8;
+    --c-tinted: #efe9dc;
+    --c-border: #e2dfd5;
+    --c-border-sub: #ece9df;
+    --c-text: #1f1c14;
+    --c-text-2: #4a4538;
+    --c-text-3: #786f5b;
+    --c-text-4: #a39c87;
+    --c-success: #047857;
+    --c-accent: #7c4dff;
+    background: var(--c-canvas);
+  }
+
+  /* ===== Page chrome ===== */
+  .page { max-width: 1400px; margin: 0 auto; padding: 48px 32px 80px; }
+  .header { text-align: center; margin-bottom: 40px; }
+  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.022em; }
+  .header p { color: #9aa0b3; font-size: 15px; margin: 0; max-width: 640px; margin-inline: auto; }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  @media (min-width: 1100px) { .grid { grid-template-columns: 1fr 1fr 1fr; gap: 16px; } }
+
+  .option { display: flex; flex-direction: column; gap: 12px; }
+  .opt-meta { display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px; }
+  .opt-name { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; letter-spacing: -0.015em; }
+  .opt-tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 99px; background: rgba(255,255,255,0.06); color: #aab0c4; }
+  .opt-tag.reco { background: linear-gradient(135deg, #9f67ff 0%, #33dbfd 100%); color: white; }
+  .opt-desc { font-size: 12.5px; color: #858aa0; line-height: 1.5; padding: 0 4px; }
+
+  .swatches { display: flex; gap: 6px; padding: 0 4px; margin-top: 4px; }
+  .swatch { flex: 1; height: 28px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
+  .swatch::after { content: attr(data-label); position: absolute; bottom: -16px; left: 0; font-size: 9.5px; font-family: 'JetBrains Mono', monospace; color: #5e6379; }
+  .swatch-row { padding-bottom: 18px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header">
+    <h1>Light theme — 3 directions</h1>
+    <p>Trois palettes pour le mode clair. Chaque option présente le même mock du dashboard Reshape pour comparer en contexte.</p>
+  </div>
+
+  <div class="grid">
+    <!-- Option A -->
+    <div class="option">
+      <div class="opt-meta">
+        <div class="opt-name">A · Cool slate</div>
+        <div class="opt-tag">Actuel</div>
+      </div>
+      <div class="opt-desc">Neutres slate-bleutés. Très tech, très "SaaS standard". C'est l'option actuelle — propre mais sans personnalité.</div>
+      <div class="mock theme-a">
+        <div class="sb">
+          <div class="brand-row"><div class="brand-logo"></div><div><div class="brand-text">Reshape</div><div class="brand-org">Sonatel</div></div></div>
+          <div class="nav-section">Pilotage</div>
+          <div class="nav-item active"><div class="nav-dot"></div>Tableau de bord</div>
+          <div class="nav-item"><div class="nav-dot"></div>Migrations<span class="nav-badge">3</span></div>
+          <div class="nav-item"><div class="nav-dot"></div>Historique</div>
+          <div class="nav-item"><div class="nav-dot"></div>Templates</div>
+          <div class="nav-section">Configuration</div>
+          <div class="nav-item"><div class="nav-dot"></div>Connecteurs</div>
+          <div class="nav-item"><div class="nav-dot"></div>Crédits</div>
+          <div class="nav-item"><div class="nav-dot"></div>Organisation</div>
+        </div>
+        <div class="main">
+          <div class="tb"><div class="tb-pill"></div><div class="tb-search">Rechercher…</div><div class="tb-actions"><span></span><span></span><span></span></div></div>
+          <div class="content">
+            <h2 class="h1">Tableau de bord</h2>
+            <div class="stats">
+              <div class="stat"><div class="stat-l">Migrations</div><div class="stat-v">142</div><div class="stat-d">+12 ce mois</div></div>
+              <div class="stat"><div class="stat-l">Lignes</div><div class="stat-v">8.2M</div><div class="stat-d">+4.1%</div></div>
+              <div class="stat"><div class="stat-l">Crédits</div><div class="stat-v">34 280</div><div class="stat-d">↓ 2 800/j</div></div>
+              <div class="stat"><div class="stat-l">Succès</div><div class="stat-v">98.4%</div><div class="stat-d">+0.3pt</div></div>
+            </div>
+            <div class="card">
+              <div class="card-h">Migrations récentes <span class="meta">5 dernières</span></div>
+              <div class="row"><span class="row-id">MIG-0412</span><span class="row-name">Salesforce → BigQuery</span><span class="row-tag">En cours</span><div class="row-bar"><div style="width:67%"></div></div></div>
+              <div class="row"><span class="row-id">MIG-0411</span><span class="row-name">Postgres → Snowflake</span><span class="row-tag">Succès</span><div class="row-bar"><div style="width:100%"></div></div></div>
+              <div class="row"><span class="row-id">MIG-0410</span><span class="row-name">Stripe → DuckDB</span><span class="row-tag">Succès</span><div class="row-bar"><div style="width:100%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches swatch-row">
+        <div class="swatch" style="background:#eff1f5" data-label="canvas"></div>
+        <div class="swatch" style="background:#ffffff" data-label="surface"></div>
+        <div class="swatch" style="background:#e6e9f1" data-label="active"></div>
+        <div class="swatch" style="background:#e2e5ec" data-label="border"></div>
+      </div>
+    </div>
+
+    <!-- Option B -->
+    <div class="option">
+      <div class="opt-meta">
+        <div class="opt-name">B · Brand-tinted</div>
+        <div class="opt-tag reco">Recommandé</div>
+      </div>
+      <div class="opt-desc">Canvas légèrement violet (cohérent marque) + surfaces blanc pur qui "popent". Les cartes deviennent des objets posés sur l'arrière-plan.</div>
+      <div class="mock theme-b">
+        <div class="sb">
+          <div class="brand-row"><div class="brand-logo"></div><div><div class="brand-text">Reshape</div><div class="brand-org">Sonatel</div></div></div>
+          <div class="nav-section">Pilotage</div>
+          <div class="nav-item active"><div class="nav-dot"></div>Tableau de bord</div>
+          <div class="nav-item"><div class="nav-dot"></div>Migrations<span class="nav-badge">3</span></div>
+          <div class="nav-item"><div class="nav-dot"></div>Historique</div>
+          <div class="nav-item"><div class="nav-dot"></div>Templates</div>
+          <div class="nav-section">Configuration</div>
+          <div class="nav-item"><div class="nav-dot"></div>Connecteurs</div>
+          <div class="nav-item"><div class="nav-dot"></div>Crédits</div>
+          <div class="nav-item"><div class="nav-dot"></div>Organisation</div>
+        </div>
+        <div class="main">
+          <div class="tb"><div class="tb-pill"></div><div class="tb-search">Rechercher…</div><div class="tb-actions"><span></span><span></span><span></span></div></div>
+          <div class="content">
+            <h2 class="h1">Tableau de bord</h2>
+            <div class="stats">
+              <div class="stat"><div class="stat-l">Migrations</div><div class="stat-v">142</div><div class="stat-d">+12 ce mois</div></div>
+              <div class="stat"><div class="stat-l">Lignes</div><div class="stat-v">8.2M</div><div class="stat-d">+4.1%</div></div>
+              <div class="stat"><div class="stat-l">Crédits</div><div class="stat-v">34 280</div><div class="stat-d">↓ 2 800/j</div></div>
+              <div class="stat"><div class="stat-l">Succès</div><div class="stat-v">98.4%</div><div class="stat-d">+0.3pt</div></div>
+            </div>
+            <div class="card">
+              <div class="card-h">Migrations récentes <span class="meta">5 dernières</span></div>
+              <div class="row"><span class="row-id">MIG-0412</span><span class="row-name">Salesforce → BigQuery</span><span class="row-tag">En cours</span><div class="row-bar"><div style="width:67%"></div></div></div>
+              <div class="row"><span class="row-id">MIG-0411</span><span class="row-name">Postgres → Snowflake</span><span class="row-tag">Succès</span><div class="row-bar"><div style="width:100%"></div></div></div>
+              <div class="row"><span class="row-id">MIG-0410</span><span class="row-name">Stripe → DuckDB</span><span class="row-tag">Succès</span><div class="row-bar"><div style="width:100%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches swatch-row">
+        <div class="swatch" style="background:#f4f2fb" data-label="canvas"></div>
+        <div class="swatch" style="background:#ffffff" data-label="surface"></div>
+        <div class="swatch" style="background:#ebe5ff" data-label="tinted"></div>
+        <div class="swatch" style="background:#e3dff1" data-label="border"></div>
+      </div>
+    </div>
+
+    <!-- Option C -->
+    <div class="option">
+      <div class="opt-meta">
+        <div class="opt-name">C · Warm stone</div>
+        <div class="opt-tag">Premium</div>
+      </div>
+      <div class="opt-desc">Neutres chauds beige/sable. "Fintech mature", style Stripe ou Things. Posé, sérieux, moins fatiguant que le bleu — mais éloigné de la marque.</div>
+      <div class="mock theme-c">
+        <div class="sb">
+          <div class="brand-row"><div class="brand-logo"></div><div><div class="brand-text">Reshape</div><div class="brand-org">Sonatel</div></div></div>
+          <div class="nav-section">Pilotage</div>
+          <div class="nav-item active"><div class="nav-dot"></div>Tableau de bord</div>
+          <div class="nav-item"><div class="nav-dot"></div>Migrations<span class="nav-badge">3</span></div>
+          <div class="nav-item"><div class="nav-dot"></div>Historique</div>
+          <div class="nav-item"><div class="nav-dot"></div>Templates</div>
+          <div class="nav-section">Configuration</div>
+          <div class="nav-item"><div class="nav-dot"></div>Connecteurs</div>
+          <div class="nav-item"><div class="nav-dot"></div>Crédits</div>
+          <div class="nav-item"><div class="nav-dot"></div>Organisation</div>
+        </div>
+        <div class="main">
+          <div class="tb"><div class="tb-pill"></div><div class="tb-search">Rechercher…</div><div class="tb-actions"><span></span><span></span><span></span></div></div>
+          <div class="content">
+            <h2 class="h1">Tableau de bord</h2>
+            <div class="stats">
+              <div class="stat"><div class="stat-l">Migrations</div><div class="stat-v">142</div><div class="stat-d">+12 ce mois</div></div>
+              <div class="stat"><div class="stat-l">Lignes</div><div class="stat-v">8.2M</div><div class="stat-d">+4.1%</div></div>
+              <div class="stat"><div class="stat-l">Crédits</div><div class="stat-v">34 280</div><div class="stat-d">↓ 2 800/j</div></div>
+              <div class="stat"><div class="stat-l">Succès</div><div class="stat-v">98.4%</div><div class="stat-d">+0.3pt</div></div>
+            </div>
+            <div class="card">
+              <div class="card-h">Migrations récentes <span class="meta">5 dernières</span></div>
+              <div class="row"><span class="row-id">MIG-0412</span><span class="row-name">Salesforce → BigQuery</span><span class="row-tag">En cours</span><div class="row-bar"><div style="width:67%"></div></div></div>
+              <div class="row"><span class="row-id">MIG-0411</span><span class="row-name">Postgres → Snowflake</span><span class="row-tag">Succès</span><div class="row-bar"><div style="width:100%"></div></div></div>
+              <div class="row"><span class="row-id">MIG-0410</span><span class="row-name">Stripe → DuckDB</span><span class="row-tag">Succès</span><div class="row-bar"><div style="width:100%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches swatch-row">
+        <div class="swatch" style="background:#f5f4ef" data-label="canvas"></div>
+        <div class="swatch" style="background:#fefdfa" data-label="surface"></div>
+        <div class="swatch" style="background:#e6e2d8" data-label="active"></div>
+        <div class="swatch" style="background:#e2dfd5" data-label="border"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
