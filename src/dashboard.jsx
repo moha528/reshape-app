@@ -170,7 +170,7 @@ export function Dashboard({ navigate }) {
         ))}
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '2fr 1fr', gap: 20, marginBottom: 20 }}>
+      <div className="grid-2-1" style={{ marginBottom: 20 }}>
         <div className="card">
           <div className="card-header">
             <div>
@@ -212,7 +212,7 @@ export function Dashboard({ navigate }) {
             </button>
           </div>
           {running.map(m => (
-            <div key={m.id} style={{ padding: '14px 20px', display: 'grid', gridTemplateColumns: '1fr 1fr 220px 100px', gap: 20, alignItems: 'center' }}>
+            <div key={m.id} className="grid-running">
               <div>
                 <div style={{ fontWeight: 600, fontSize: 13.5 }}>{m.name}</div>
                 <div className="mono" style={{ color: 'var(--text-tertiary)' }}>{m.id}</div>
@@ -236,7 +236,7 @@ export function Dashboard({ navigate }) {
         </div>
       )}
 
-      <div className="grid" style={{ gridTemplateColumns: '2fr 1fr', gap: 20 }}>
+      <div className="grid-2-1">
         <div className="card">
           <div className="card-header">
             <div><h3 className="card-title">Migrations récentes</h3><div className="card-subtitle">5 dernières activités</div></div>

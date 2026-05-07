@@ -145,7 +145,7 @@ export function MigrationDetail({ navigate }) {
       </div>
 
       {tab === 'overview' && (
-        <div className="grid" style={{ gridTemplateColumns: '2fr 1fr', gap: 20 }}>
+        <div className="grid-2-1">
           <div className="col gap-4">
             <div className="card">
               <div className="card-header"><div><h3 className="card-title">Configuration</h3></div></div>
@@ -365,7 +365,7 @@ export function Connectors() {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid grid-cols-2">
         <div className="card">
           <div className="card-header"><div><h3 className="card-title">Bases de données supportées</h3></div></div>
           <div className="card-body">
@@ -492,7 +492,7 @@ export function Credits() {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '2fr 1fr', gap: 20, marginBottom: 20 }}>
+      <div className="grid-2-1" style={{ marginBottom: 20 }}>
         <div className="card" style={{ background: 'var(--gradient-brand-strong)', color: '#fff', border: 'none', overflow: 'hidden', position: 'relative' }}>
           <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 80% 0%, rgba(255,255,255,0.15), transparent 60%)' }}></div>
           <div className="card-body" style={{ position: 'relative', padding: 28 }}>
@@ -753,7 +753,7 @@ export function Webhooks() {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid grid-cols-2">
         <div className="card">
           <div className="card-header"><div><h3 className="card-title">Payload exemple</h3><div className="card-subtitle">migration.success</div></div>
             <button className="btn btn-ghost btn-sm"><Icon name="copy" size={12} /> Copier</button>
@@ -807,7 +807,7 @@ export function Settings() {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '220px 1fr', gap: 24 }}>
+      <div className="grid settings-layout" style={{ gridTemplateColumns: '220px 1fr', gap: 24 }}>
         <nav className="settings-nav">
           {[
             { id: 'profile', l: 'Profil', i: 'user' },

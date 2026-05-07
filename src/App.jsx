@@ -23,6 +23,13 @@ export function App() {
   const [t, setTweak] = useTweaks(TWEAKS_DEFAULTS);
 
   React.useEffect(() => {
+    const check = () => { if (window.innerWidth < 1025) setSbHidden(true); };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  React.useEffect(() => {
     document.documentElement.dataset.theme = t.theme;
     document.documentElement.dataset.accent = t.accent;
     document.documentElement.dataset.density = t.density;
@@ -66,6 +73,7 @@ export function App() {
 
   return (
     <div className={`app-root ${sbHidden ? 'sb-hidden' : ''}`}>
+      <div className="sb-backdrop" onClick={() => setSbHidden(true)} />
       <Sidebar current={route} navigate={setRoute} credits={34280} onAuthLogout={() => setAuthed(false)} />
       <div className="app-main">
         <Topbar

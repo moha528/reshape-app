@@ -98,7 +98,7 @@ export function ExecutionMonitor({ navigate }) {
           <div className="progress" style={{ height: 10, marginBottom: 12 }}>
             <div className={`bar ${!paused ? 'animated' : ''}`} style={{ width: progress + '%' }}></div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, fontSize: 12 }}>
+          <div className="grid-5-stats" style={{ fontSize: 12 }}>
             {[
               { l: 'Lignes traitées', v: fmt(Math.round(184320 * progress / 67)), s: 'sur 275 000' },
               { l: 'Vitesse', v: '3 240', s: 'lignes/sec' },
@@ -116,7 +116,7 @@ export function ExecutionMonitor({ navigate }) {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
         <div className="card">
           <div className="card-header"><div><h3 className="card-title">Étapes du pipeline</h3></div></div>
           <div style={{ padding: '12px 20px 18px' }}>

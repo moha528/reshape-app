@@ -197,7 +197,7 @@ function StepAnalyze() {
         </div>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+      <div className="grid grid-cols-2" style={{ marginBottom: 20 }}>
         <div className="card">
           <div className="card-header" style={{ paddingBottom: 12 }}>
             <div><h3 className="card-title">Tables détectées</h3><div className="card-subtitle">3 tables · cliquez pour explorer</div></div>
@@ -551,7 +551,7 @@ function StepConfirm({ delivery, setDelivery, aiMode, navigate }) {
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600, margin: 0, letterSpacing: '-0.015em' }}>Confirmation & lancement</h2>
       <p style={{ color: 'var(--text-tertiary)', fontSize: 13.5, marginTop: 4, marginBottom: 24 }}>Récapitulatif final, livraison et estimation des crédits.</p>
 
-      <div className="grid" style={{ gridTemplateColumns: '1fr 320px', gap: 20 }}>
+      <div className="grid-confirm">
         <div className="col gap-4">
           <div className="card">
             <div className="card-header"><div><h3 className="card-title">Récapitulatif</h3></div></div>
@@ -594,7 +594,7 @@ function StepConfirm({ delivery, setDelivery, aiMode, navigate }) {
           </div>
         </div>
 
-        <div className="card" style={{ height: 'fit-content', position: 'sticky', top: 80, background: 'linear-gradient(135deg, rgba(159,103,255,0.06), rgba(51,219,253,0.04))', borderColor: 'rgba(124,77,255,0.3)' }}>
+        <div className="card confirm-sticky" style={{ height: 'fit-content', position: 'sticky', top: 80, background: 'linear-gradient(135deg, rgba(159,103,255,0.06), rgba(51,219,253,0.04))', borderColor: 'rgba(124,77,255,0.3)' }}>
           <div className="card-header"><div><h3 className="card-title">Estimation</h3><div className="card-subtitle">Coût en crédits</div></div><Icon name="coins" /></div>
           <div className="card-body">
             {[
